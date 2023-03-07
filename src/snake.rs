@@ -7,9 +7,9 @@ const SMILEY: [u8; 8] = [
     0b00100100,
     0b00100100,
     0b00000000,
+    0b00011000,
     0b00100100,
-    0b10011001,
-    0b11000011,
+    0b10000001,
 ];
 
 #[derive(PartialEq, Eq)]
@@ -73,7 +73,7 @@ impl Snake {
         self.speed = 1;
     }
 
-    pub fn is_dead(&self) -> bool {
+    pub fn bitten(&self) -> bool {
         self.body
             .iter()
             .skip(1)
@@ -88,7 +88,13 @@ impl Snake {
         }
 
         set_draw_color(0x4);
-        wasm4::blit(&SMILEY, self.body[0].x * 8, self.body[0].y * 8, 8, 8, wasm4::BLIT_1BPP);
+        let head_direction = match self.direction {
+            Direction::Left  => wasm4::BLIT_1BPP | wasm4::BLIT_ROTATE | wasm4::BLIT_FLIP_Y,
+            Direction::Right => wasm4::BLIT_1BPP | wasm4::BLIT_ROTATE,
+            Direction::Up    => wasm4::BLIT_1BPP | wasm4::BLIT_FLIP_Y,
+            Direction::Down  => wasm4::BLIT_1BPP,
+        };
+        wasm4::blit(&SMILEY, self.body[0].x * 8, self.body[0].y * 8, 8, 8, head_direction);
     }
 
     pub fn update(&mut self) -> Option<Point> {

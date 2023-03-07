@@ -68,7 +68,7 @@ impl Game {
                 self.snake.speed = 1;
             }
 
-            if self.snake.is_dead() {
+            if self.snake.bitten() {
                 self.life.lose_life();
                 if self.life.lifes_count == 0 {
                     self.game_over = true;
