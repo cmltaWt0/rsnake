@@ -106,39 +106,23 @@ impl Game {
         let just_pressed = gamepad & (gamepad ^ self.prev_gamepad);
 
         if just_pressed & wasm4::BUTTON_LEFT != 0 {
-            if self.snake.is_left() {
-                self.snake.speed = 3;
-            } else {
-                self.snake.left();    
-                self.lock_input = true;
-            }
+            self.snake.left();    
+            self.lock_input = true;
         }
         
         if just_pressed & wasm4::BUTTON_RIGHT != 0 {
-            if self.snake.is_right() {
-                self.snake.speed = 3;
-            } else {
-                self.snake.right();
-                self.lock_input = true;
-            }
+            self.snake.right();
+            self.lock_input = true;
         }
         
         if just_pressed & wasm4::BUTTON_UP != 0 {
-            if self.snake.is_up() {
-                self.snake.speed = 3;
-            } else {
-                self.snake.up();
-                self.lock_input = true;
-            }
+            self.snake.up();
+            self.lock_input = true;
         }
         
         if just_pressed & wasm4::BUTTON_DOWN != 0 {
-            if self.snake.is_down() {
-                self.snake.speed = 3;
-            } else {
-                self.snake.down();
-                self.lock_input = true;
-            }
+            self.snake.down();
+            self.lock_input = true;
         }
 
         self.prev_gamepad = gamepad;

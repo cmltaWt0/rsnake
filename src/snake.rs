@@ -12,10 +12,31 @@ const SMILEY: [u8; 8] = [
     0b11000011,
 ];
 
-const LEFT:  Point = Point { x: -1, y: 0 };
-const RIGHT: Point = Point { x: 1, y: 0 };
-const UP:    Point = Point { x: 0, y: -1 };
-const DOWN:  Point = Point { x: 0, y: 1 };
+#[derive(PartialEq, Eq)]
+pub enum Direction {
+    Left,
+    Right,
+    Up,
+    Down,
+}
+
+impl Direction {
+    fn x_increment(&self) -> i32 {
+        match self {
+            Direction::Left => -1,
+            Direction::Right => 1,
+            _ => 0,
+        }
+    }
+
+    fn y_increment(&self) -> i32 {
+        match self {
+            Direction::Up => -1,
+            Direction::Down => 1,
+            _ => 0,
+        }
+    }
+}
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct Point {
@@ -25,7 +46,7 @@ pub struct Point {
 
 pub struct Snake {
     pub body: Vec<Point>,
-    pub direction: Point,
+    pub direction: Direction,
     pub speed: u8,
 }
 
@@ -37,7 +58,7 @@ impl Snake {
                 Point { x: 1, y: 1},
                 Point { x: 0, y: 1},
             ],
-            direction: Point { x: 1, y: 0 },
+            direction: Direction::Right,
             speed: 1,
         }
     }
@@ -48,7 +69,7 @@ impl Snake {
             Point { x: 1, y: 1},
             Point { x: 0, y: 1},
         ];
-        self.direction = Point { x: 1, y: 0 };
+        self.direction = Direction::Right;
         self.speed = 1;
     }
 
@@ -74,8 +95,8 @@ impl Snake {
         self.body.insert(
             0,
             Point {
-                x: (self.body[0].x + self.direction.x) % 20,
-                y: (self.body[0].y + self.direction.y) % 20,
+                x: (self.body[0].x + self.direction.x_increment()) % 20,
+                y: (self.body[0].y + self.direction.y_increment()) % 20,
             },
         );
 
@@ -91,42 +112,46 @@ impl Snake {
     }
 
     pub fn left(&mut self) {
-        if self.direction.x == 0 {
-            self.direction = LEFT;
+        if self.direction == Direction::Left {
+            self.speed = 3;
+        }
+        match self.direction {
+            Direction::Up => self.direction = Direction::Left,
+            Direction::Down => self.direction = Direction::Left,
+            _ => (),
         }
     }
 
     pub fn right(&mut self) {
-        if self.direction.x == 0 {
-            self.direction = RIGHT;
+        if self.direction == Direction::Right {
+            self.speed = 3;
+        }
+        match self.direction {
+            Direction::Up => self.direction = Direction::Right,
+            Direction::Down => self.direction = Direction::Right,
+            _ => (),
         }
     }
 
     pub fn up(&mut self) {
-        if self.direction.y == 0 {
-            self.direction = UP;
+        if self.direction == Direction::Up {
+            self.speed = 3;
+        }
+        match self.direction {
+            Direction::Left => self.direction = Direction::Up,
+            Direction::Right => self.direction = Direction::Up,
+            _ => (),
         }
     }
 
     pub fn down(&mut self) {
-        if self.direction.y == 0 {
-            self.direction = DOWN;
+        if self.direction == Direction::Down {
+            self.speed = 3;
         }
-    }
-
-    pub fn is_left(&mut self) -> bool {
-        self.direction == LEFT
-    }
-
-    pub fn is_right(&mut self) -> bool {
-        self.direction == RIGHT
-    }
-
-    pub fn is_up(&mut self) -> bool {
-        self.direction == UP
-    }
-
-    pub fn is_down(&mut self) -> bool {
-        self.direction == DOWN
+        match self.direction {
+            Direction::Left => self.direction = Direction::Down,
+            Direction::Right => self.direction = Direction::Down,
+            _ => (),
+        }
     }
 }
